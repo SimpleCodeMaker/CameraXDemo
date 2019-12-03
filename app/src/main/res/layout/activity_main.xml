@@ -3,16 +3,116 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    android:layout_height="match_parent">
 
     <TextureView
         android:id="@+id/sv"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintDimensionRatio="1"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/avater_ll"
+        android:layout_width="wrap_content"
+        android:layout_height="60dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/avaterbg"
+        app:layout_constraintLeft_toLeftOf="parent"
+
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/avater"
+            android:layout_width="50dp"
+            android:layout_marginLeft="5dp"
+            android:layout_height="50dp"
+            tools:src="@drawable/avater_img"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/nickname"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:gravity="center"
+            android:text="XXX直播间"
+            android:textColor="@android:color/white"
+            app:layout_constraintBottom_toTopOf="@id/count"
+            app:layout_constraintLeft_toRightOf="@id/avater"
+            app:layout_constraintTop_toTopOf="@id/avater"
+            app:layout_constraintVertical_chainStyle="spread" />
+
+        <TextView
+            android:id="@+id/count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawableLeft="@drawable/leftdrawable_count"
+            android:drawablePadding="5dp"
+            android:text="8"
+            android:textColor="@android:color/white"
+            app:layout_constraintBottom_toBottomOf="@id/avater"
+            app:layout_constraintLeft_toLeftOf="@id/nickname"
+            app:layout_constraintTop_toBottomOf="@id/nickname" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:layout_marginRight="20dp"
+            android:background="@drawable/followbg"
+            android:gravity="center"
+            android:paddingLeft="15dp"
+            android:paddingTop="3dp"
+            android:paddingRight="15dp"
+            android:paddingBottom="3dp"
+            android:text="关注"
+            android:textColor="@android:color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toRightOf="@id/nickname"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/avaters"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintBottom_toBottomOf="@id/avater_ll"
+        app:layout_constraintLeft_toRightOf="@id/avater_ll"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@id/avater_ll" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/top_gl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.618" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/mid_gl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.618" />
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/content"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="@id/mid_gl"
+        app:layout_constraintTop_toTopOf="@+id/top_gl" />
 </androidx.constraintlayout.widget.ConstraintLayout>
