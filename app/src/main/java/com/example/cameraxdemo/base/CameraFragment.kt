@@ -1,50 +1,45 @@
-package com.example.cameraxdemo
+package com.example.cameraxdemo.base
 
 import android.Manifest
+import android.app.Activity
 import android.content.pm.PackageManager
 import android.graphics.Matrix
 import android.graphics.Rect
-import androidx.appcompat.app.AppCompatActivity
-import android.os.Bundle
-import android.view.*
+import android.view.Surface
+import android.view.TextureView
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
 import androidx.camera.core.CameraX
 import androidx.camera.core.Preview
 import androidx.camera.core.PreviewConfig
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.ViewModel
 import androidx.recyclerview.widget.RecyclerView
+import com.example.cameraxdemo.*
 import kotlinx.android.synthetic.main.fragment_camera.*
 import org.jetbrains.anko.dip
-import java.util.concurrent.Executors
-
 private const val REQUEST_CODE_PERMISSIONS = 10
-
-class MainActivity : AppCompatActivity(), LifecycleOwner {
-    private val executor = Executors.newSingleThreadExecutor()
-    private lateinit var viewFinder: TextureView
-
+class CameraFragment:BaseFragment<ViewModel>() {
     //请求的权限
     private val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.CAMERA)
+    override fun setLayoutRes(): Int = R.layout.fragment_camera
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.fragment_camera)
+    override fun initView() {
 
-        viewFinder = findViewById(R.id.sv)
 
         //请求摄像头权限
         if (allPermissionsGranted()) {
-            viewFinder.post { startCamera() }
+            sv.post { startCamera() }
         } else {
             ActivityCompat.requestPermissions(
-                this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS
+                activity as Activity, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS
             )
         }
 
         // Every time the provided texture view changes, recompute layout
-        viewFinder.addOnLayoutChangeListener { _, _, _, _, _, _, _, _, _ ->
+        sv.addOnLayoutChangeListener { _, _, _, _, _, _, _, _, _ ->
             updateTransform()
         }
         avater.roundRectDrawable(R.drawable.avater)
@@ -52,13 +47,22 @@ class MainActivity : AppCompatActivity(), LifecycleOwner {
             override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
                 super.getItemOffsets(outRect, view, parent, state)
                 if (parent?.getChildAdapterPosition(view) != 0) {
-                    outRect?.left = dip(-5)
+                    outRect?.left = context!!.dip(-5)
                 }
             }
         })
         AvaterAdapter().bindToRecyclerView(avaters)
 
         CommentAdapter().bindToRecyclerView(content)
+    }
+
+    override fun initData() {
+    }
+
+    override fun initEvent() {
+    }
+
+    override fun initObserve() {
     }
 
 
@@ -71,14 +75,14 @@ class MainActivity : AppCompatActivity(), LifecycleOwner {
     ) {
         if (requestCode == REQUEST_CODE_PERMISSIONS) {
             if (allPermissionsGranted()) {
-                viewFinder.post { startCamera() }
+                sv.post { startCamera() }
             } else {
                 Toast.makeText(
-                    this,
+                    context,
                     "Permissions not granted by the user.",
                     Toast.LENGTH_SHORT
                 ).show()
-                finish()
+//                finish()
             }
         }
     }
@@ -88,31 +92,31 @@ class MainActivity : AppCompatActivity(), LifecycleOwner {
      */
     private fun allPermissionsGranted() = REQUIRED_PERMISSIONS.all {
         ContextCompat.checkSelfPermission(
-            baseContext, it
+            context!!, it
         ) == PackageManager.PERMISSION_GRANTED
     }
 
     private fun startCamera() {
 
-        // Create configuration object for the viewfinder use case
+        // Create configuration object for the sv use case
         val previewConfig = PreviewConfig.Builder().apply {
             setLensFacing(CameraX.LensFacing.FRONT)
 //            setTargetResolution(Size(640, 480))
         }.build()
 
 
-        // Build the viewfinder use case
+        // Build the sv use case
         val preview = Preview(previewConfig)
 
-        // Every time the viewfinder is updated, recompute layout
+        // Every time the sv is updated, recompute layout
         preview.setOnPreviewOutputUpdateListener {
 
             // To update the SurfaceTexture, we have to remove it and re-add it
-            val parent = viewFinder.parent as ViewGroup
-            parent.removeView(viewFinder)
-            parent.addView(viewFinder, 0)
+            val parent = sv.parent as ViewGroup
+            parent.removeView(sv)
+            parent.addView(sv, 0)
 
-            viewFinder.surfaceTexture = it.surfaceTexture
+            sv.surfaceTexture = it.surfaceTexture
             updateTransform()
         }
 
@@ -127,11 +131,11 @@ class MainActivity : AppCompatActivity(), LifecycleOwner {
         val matrix = Matrix()
 
         // Compute the center of the view finder
-        val centerX = viewFinder.width / 2f
-        val centerY = viewFinder.height / 2f
+        val centerX = sv.width / 2f
+        val centerY = sv.height / 2f
 
         // Correct preview output to account for display rotation
-        val rotationDegrees = when (viewFinder.display.rotation) {
+        val rotationDegrees = when (sv.display.rotation) {
             Surface.ROTATION_0 -> 0
             Surface.ROTATION_90 -> 90
             Surface.ROTATION_180 -> 180
@@ -141,6 +145,6 @@ class MainActivity : AppCompatActivity(), LifecycleOwner {
         matrix.postRotate(-rotationDegrees.toFloat(), centerX, centerY)
 
         // Finally, apply transformations to our TextureView
-        viewFinder.setTransform(matrix)
+        sv.setTransform(matrix)
     }
 }
