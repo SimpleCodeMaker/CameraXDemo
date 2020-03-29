@@ -1,4 +1,4 @@
-package com.example.cameraxdemo.base
+package com.example.leftrightleft.base
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -40,10 +40,9 @@ abstract class BaseFragment<T : ViewModel> : Fragment() {
     protected abstract fun initObserve()
     private fun abstractInit() {
         initView()
-        initData()
         initEvent()
         initObserve()
-
+        initData()
     }
 
 

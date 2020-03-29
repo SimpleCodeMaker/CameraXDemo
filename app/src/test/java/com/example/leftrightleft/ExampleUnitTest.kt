@@ -1,4 +1,4 @@
-package com.example.cameraxdemo
+package com.example.leftrightleft
 
 import org.junit.Test
 

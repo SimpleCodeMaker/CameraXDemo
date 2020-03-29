@@ -1,4 +1,4 @@
-package com.example.cameraxdemo.base
+package com.example.leftrightleft.fragment
 
 import android.Manifest
 import android.app.Activity
@@ -6,7 +6,6 @@ import android.content.pm.PackageManager
 import android.graphics.Matrix
 import android.graphics.Rect
 import android.view.Surface
-import android.view.TextureView
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
@@ -15,26 +14,30 @@ import androidx.camera.core.Preview
 import androidx.camera.core.PreviewConfig
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
-import com.example.cameraxdemo.*
+import com.example.leftrightleft.*
+import com.example.leftrightleft.base.BaseFragment
 import kotlinx.android.synthetic.main.fragment_camera.*
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.jetbrains.anko.dip
 private const val REQUEST_CODE_PERMISSIONS = 10
-class CameraFragment:BaseFragment<ViewModel>() {
+class CameraFragment: BaseFragment<CameraViewModel>() {
     //请求的权限
     private val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.CAMERA)
     override fun setLayoutRes(): Int = R.layout.fragment_camera
 
-    override fun initView() {
 
+    override fun initView() {
 
         //请求摄像头权限
         if (allPermissionsGranted()) {
             sv.post { startCamera() }
         } else {
             ActivityCompat.requestPermissions(
-                activity as Activity, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS
+                activity as Activity, REQUIRED_PERMISSIONS,
+                REQUEST_CODE_PERMISSIONS
             )
         }
 
@@ -54,14 +57,23 @@ class CameraFragment:BaseFragment<ViewModel>() {
         AvaterAdapter().bindToRecyclerView(avaters)
 
         CommentAdapter().bindToRecyclerView(content)
+        content.addItemDecoration(object : RecyclerView.ItemDecoration() {
+            override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
+                if (parent.getChildLayoutPosition(view) != 0)
+                    outRect.top = 10;
+            }
+        })
+        content.setOnTouchListener { v, event ->
+            true
+        }
     }
 
     override fun initData() {
+        startScroll()
     }
 
     override fun initEvent() {
     }
-
     override fun initObserve() {
     }
 
@@ -146,5 +158,20 @@ class CameraFragment:BaseFragment<ViewModel>() {
 
         // Finally, apply transformations to our TextureView
         sv.setTransform(matrix)
+    }
+
+    fun startScroll(){
+        viewLifecycleOwner.lifecycleScope.launch{
+            while (true){
+                delay(32)
+                content.post {
+                    content?.let{
+
+                        content.scrollBy(0,2)
+                        avaters.scrollBy(2,0)
+                    }
+                }
+            }
+        }
     }
 }
