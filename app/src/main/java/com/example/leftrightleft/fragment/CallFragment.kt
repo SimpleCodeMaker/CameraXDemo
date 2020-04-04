@@ -4,6 +4,7 @@ import android.media.AudioManager
 import android.media.MediaPlayer
 import android.media.SoundPool
 import android.net.Uri
+import android.os.Environment
 import android.view.View
 import androidx.lifecycle.ViewModel
 import com.example.leftrightleft.R
@@ -16,7 +17,7 @@ class CallFragment : BaseFragment<ViewModel>() {
     var player: MediaPlayer? = null
     var load = 0
     override fun setLayoutRes(): Int = R.layout.fragment_call
-    val sound = "/sdcard/zuoyouzuo/电话的声音.mp3"
+    val sound = Environment.getExternalStorageDirectory().absolutePath+"/zuoyouzuo/电话的声音.mp3"
     override fun initView() {
     }
 

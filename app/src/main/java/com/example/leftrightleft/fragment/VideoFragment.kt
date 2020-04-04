@@ -3,6 +3,7 @@ package com.example.leftrightleft.fragment
 import android.media.MediaPlayer.OnCompletionListener
 import android.media.MediaPlayer.OnPreparedListener
 import android.net.Uri
+import android.os.Environment
 import androidx.lifecycle.ViewModel
 import com.example.leftrightleft.R
 import com.example.leftrightleft.base.BaseFragment
@@ -11,7 +12,7 @@ import java.io.File
 
 
 class VideoFragment : BaseFragment<ViewModel>() {
-    val source1 = "/mnt/sdcard/zuoyouzuo/默认影片.mp4";
+    val source1 = Environment.getExternalStorageDirectory().absolutePath+"/zuoyouzuo/默认影片.mp4"
     override fun setLayoutRes(): Int = R.layout.fragment_video
 
     override fun initView() {
